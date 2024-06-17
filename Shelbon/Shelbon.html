@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHELBON</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        /* Estilo para la imagen de fondo */
+        body {
+            background-image: url('./imagenes/fondo.png');
+            /* Cambia 'tu-imagen.jpg' por la ruta y nombre de tu imagen */
+        }
+    </style>
+</head>
+
+<body>
+    <section id="seleccionar-mascota">
+        <h1 class="titulo">SHELBON</h1>
+        <h2 class="subtitulo">Elige tu mascota:</h2>
+
+        <div id="contenedorTarjetas" class="tarjetas">
+
+        </div>
+
+        <button id="boton-mascota">Seleccionar</button>
+    </section>
+    <section id="seleccionar-ataque">
+        <h1 class="titulo">SHELBON! 🔥💧🌱</h1>
+        <h2 class="subtitulo">Elige tu ataque:</h2>
+
+        <div id="contenedorAtaques" class="tarjestasAtaques">
+
+        </div>
+        <div id="mensajes">
+            <p id="resultado">Mucha suerte</p>
+
+            <section id="Reiniciar">
+                <button id="boton-Reiniciar">Reiniciar</button>
+            </section>
+        </div>
+
+        <div class="ataques">
+            <div class="jugador">
+                <p id="vidas-Jugador">3</p>
+                <p id="mascota-Jugador"></p>
+                <div id="ataqueDelJugador"></div>
+            </div>
+            <div class="maquina">
+                <p id="vidas-Enemigo">3</p>
+                <p id="mascota-enemigo"></p>
+                <div id="ataqueDelEnemigo"></div>
+            </div>
+        </div>
+    </section>
+    <script src="./js/Shelbon.js"></script>
+</body>
+
+</html>

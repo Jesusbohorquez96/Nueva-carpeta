@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap');
+
+body {
+    font-family: "Recursive", sans-serif;
+    color: rgb(255, 255, 255);
+
+}
+
+#seleccionar-mascota {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.titulo {
+    color: rgb(72, 255, 0);
+    width: 265px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.subtitulo {
+    flex: auto;
+    font-size: 20px;
+    color: aliceblue;
+    display: flex;
+    justify-content: center;
+}
+
+.tarjetas,
+.tarjestasAtaques {
+    display: flex;
+    color: aliceblue;
+
+}
+
+.tarjeta-de-shelbon {
+    width: 114px;
+    height: 156px;
+    padding: 15px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.tarjeta-de-shelbon img {
+    width: 85px;
+}
+
+#boton-mascota {
+    font-size: 12px;
+    font-family: Verdana, Helvetica;
+    color: rgb(0, 0, 0);
+    background: #09aa9d;
+    width: 93px;
+    height: 33px;
+    border-radius: 20px;
+    border: 2px solid wheat;
+    margin-top: 30px;
+    margin-right: 10px;
+    font-family: "Recursive", sans-serif;
+}
+
+input {
+    display: none;
+}
+
+input:checked+label {
+    background-color: #279eee;
+    box-sizing: border-box;
+    border-radius: 25px;
+    font-family: "Recursive", sans-serif;
+
+}
+
+#seleccionar-ataque {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.boton-de-ataque {
+    background-color: rgb(72, 255, 0);
+    margin-right: 18px;
+    padding: 1px 10px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    font-family: "Recursive", sans-serif;
+}
+
+.tarjestasAtaques {
+    width: 200px;
+    height: 45px;
+
+}
+
+#mensajes {
+    width: 350px;
+    background: transparent;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#boton-Reiniciar {
+    color: rgb(0, 0, 0);
+    background: #09aa9d;
+    width: 93px;
+    height: 33px;
+    border-radius: 20px;
+    border: 2px solid wheat;
+    margin-top: 30px;
+    margin-right: 10px;
+    font-family: "Recursive", sans-serif;
+}
+
+.ataques {
+    display: grid;
+    grid-template-columns: 100px 100px;
+    justify-items: center;
+}
+
+.jugador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.maquina {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 360px) {
+
+    .tarjetas,
+    .tarjestasAtaques {
+        flex-direction: column;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+    }
+}
