@@ -14,6 +14,9 @@ const ataqueDelEnemigo = document.getElementById("ataqueDelEnemigo")
 const contenedorTarjetas = document.getElementById("contenedorTarjetas")
 const contenedorAtaques = document.getElementById("contenedorAtaques")
 
+const sectionVerMapa = document.getElementById("ver-mapa")
+const mapa = document.getElementById("mapa")
+
 let shelbones = []
 let ataqueJugador = []
 let ataqueEnemigo = []
@@ -34,6 +37,7 @@ let victoriasJugador = 0
 let victoriasEnemigo = 0
 let vidasJugador = 3
 let vidasEnemigo = 3
+let lienzo = mapa.getContext("2d")
 
 class Shelbon {
     constructor(nombre, foto, vida) {
@@ -41,6 +45,12 @@ class Shelbon {
         this.foto = foto
         this.vida = vida
         this.ataques = []
+        this.x = 20
+        this.y = 30
+        this.ancho = 80
+        this.alto = 80
+        this.mapaFoto = new Image()
+        this.mapaFoto.src = foto
     }
 }
 
@@ -77,6 +87,7 @@ shelbones.push(Hipodoge, Capipepo, Ratigueya)
 
 function iniciarJuego() {
     sectionSeleleccionarAtaque.style.display = "none"
+    sectionVerMapa.style.display = "none"
 
     shelbones.forEach((shelbon) => {
         opcinesShelbones = `
@@ -101,7 +112,9 @@ function iniciarJuego() {
 function seleccionarMascotaJugador() {
 
     sectionSeleleccionarMascota.style.display = "none"
-    sectionSeleleccionarAtaque.style.display = "flex"
+
+    // sectionSeleleccionarAtaque.style.display = "flex"
+    sectionVerMapa.style.display = "flex"
 
     if (inputHipodoge.checked) {
         spanMacotaJugador.innerHTML = inputHipodoge.id
@@ -262,4 +275,58 @@ function reiniciarJuego() {
 function aleatorio(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+function pintarPersonaje() {
+    Capipepo.x = Capipepo.x + Capipepo.velocidadX
+    Capipepo.y = Capipepo.y + Capipepo.velocidady
+    lienzo.clearRect(0, 0, mapa.width, mapa.height)
+    lienzo.drawImage(
+        Capipepo.mapaFoto,
+        Capipepo.x,
+        Capipepo.y,
+        Capipepo.ancho,
+        Capipepo.alto
+    )
+}
+
+function moverDerecha() {
+    Capipepo.velocidadX = 5
+}
+function moverIzquierda() {
+    Capipepo.velocidadX = -5
+}
+function moverAbajo() {
+    Capipepo.velocidady = 5
+}
+function moverArriba() {
+    Capipepo.velocidady = -5
+}
+function detenerMovimiento() {
+    Capipepo.velocidadX = 0
+    Capipepo.velocidady = 0
+}
+function sePresionoUnaTecla(event) {
+    switch (event.key) {
+        case "Arrowup":
+            moverArriba()
+            break;
+        case "Arrowdown":
+            moverAbajo()
+        case "Arrowleft":
+            moverIzquierda()
+            break
+        case "ArrowRigth":
+            moverDerecha()
+            break
+        default:
+            break;
+    }
+}
+
+function iniciarMapa() {
+    intervalo = setInterval(pintarPersonaje, 50)
+    window.addEventListener("keydown", sePresionoUnaTecla)
+    window.addEventListener("keyup", detenerMovimiento)
+}
+
 window.addEventListener("load", iniciarJuego)

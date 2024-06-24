@@ -1,18 +1,29 @@
-<html>
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import NoTranscriptFound, TranscriptsDisabled
 
-<head>
-	<meta charset="utf8" />
-	<title>Mi primer pagina</title>
-	<script>
-		let nombre = ""
-		nombre = prompt("cual es tu nombre")
-		alert("Bienvenio " + nombre)
-	</script>
-</head>
+# ID del video de YouTube
+video_id = "r26ZJcYmc8I"  # Reemplaza esto con el ID de tu video
 
-<body>
-	<h1>mi primer pagian web</h1>
-	<p>Gran programa</p>
-</body>
+# Idioma deseado para la transcripción (español en este caso)
+desired_language = "es"
 
-</html>
+# Nombre del archivo donde se guardará la transcripción
+output_file = "transcripcion_es.txt"
+
+try:
+    # Obtener la transcripción en el idioma deseado
+    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[desired_language])
+
+    # Guardar la transcripción en un archivo de texto
+    with open(output_file, "w", encoding="utf-8") as file:
+        for entry in transcript:
+            file.write(f"{entry['start']:.2f} - {entry['text']}\n")
+
+    print(f"Transcripción en español guardada exitosamente en {output_file}")
+
+except NoTranscriptFound:
+    print("No se encontró transcripción para este video en el idioma especificado.")
+except TranscriptsDisabled:
+    print("Los subtítulos están desactivados para este video.")
+except Exception as e:
+    print(f"No se pudo obtener la transcripción: {e}")
