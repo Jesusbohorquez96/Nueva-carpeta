@@ -88,7 +88,7 @@ input:checked+label {
 
 #contenedorAtaques {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
 }
 
 .boton-de-ataque {
@@ -147,7 +147,30 @@ input:checked+label {
     align-items: center;
 }
 
-@media (max-width: 360px) {
+#ver-mapa {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#ver-mapa button {
+    font-size: 12px;
+    font-family: Verdana, Helvetica;
+    color: rgb(0, 0, 0);
+    background: #09aa9d;
+    width: 83px;
+    height: 32px;
+    border-radius: 20px;
+    border: 2px solid wheat;
+    margin-top: 3px;
+    font-family: "Recursive", sans-serif;
+}
+
+#mapa {
+    border: 2px solid white;
+}
+
+@media (max-width: 560px) {
 
     .tarjetas,
     .tarjestasAtaques {
@@ -156,6 +179,17 @@ input:checked+label {
         flex-direction: column;
         align-items: center;
         gap: 10px;
+
+    }
+}
+
+@media (max-width: 300px) {
+
+    #ver-mapa div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* gap: 10px; */
 
     }
 }

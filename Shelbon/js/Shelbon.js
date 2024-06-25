@@ -25,6 +25,7 @@ let inputHipodoge
 let inputCapipepo
 let inputRatigueya
 let mascotaJugador
+let mascotaJugadorObjeto
 let ataquesShelbon
 let ataquesShelbonEnemigo
 let botonFuego
@@ -38,25 +39,61 @@ let victoriasEnemigo = 0
 let vidasJugador = 3
 let vidasEnemigo = 3
 let lienzo = mapa.getContext("2d")
+let intervalo
+let mapaBackground = new Image()
+mapaBackground.src = './imagenes/shelbymap1.png'
+let alturaQueBuscamos
+let anchoDelMapa = window.innerWidth - 20
+const anchoMaximodelMapa = 350
+if (anchoDelMapa > anchoMaximodelMapa) {
+    anchoDelMapa = anchoMaximodelMapa - 20
+}
+
+alturaQueBuscamos = anchoDelMapa * 600 / 800
+
+mapa.width = anchoDelMapa
+mapa.height = alturaQueBuscamos
 
 class Shelbon {
-    constructor(nombre, foto, vida) {
+    constructor(nombre, foto, vida, fotoMapa) {
         this.nombre = nombre
         this.foto = foto
         this.vida = vida
         this.ataques = []
-        this.x = 20
-        this.y = 30
-        this.ancho = 80
-        this.alto = 80
+        this.ancho = 45
+        this.alto = 45
+        this.x = aleatorio(0, mapa.width - this.ancho)
+        this.y = aleatorio(0, mapa.height - this.alto)
         this.mapaFoto = new Image()
-        this.mapaFoto.src = foto
+        this.mapaFoto.src = fotoMapa
+        this.velocidadX = 0
+        this.velocidady = 0
+    }
+    pintarShelbon() {
+        lienzo.drawImage(
+            this.mapaFoto,
+            this.x,
+            this.y,
+            this.ancho,
+            this.alto
+        )
     }
 }
 
-let Hipodoge = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5)
-let Capipepo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5)
-let Ratigueya = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5)
+
+let Hipodoge = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png'
+)
+let Capipepo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png'
+)
+let Ratigueya = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png'
+)
+let HipodogeEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png'
+)
+let CapipepoEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png'
+)
+let RatigueyaEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png'
+)
+
 
 Hipodoge.ataques.push(
     { nombre: "🔥", id: "boton-fuego" },
@@ -65,6 +102,14 @@ Hipodoge.ataques.push(
     { nombre: "💧", id: "boton-agua" },
     { nombre: "🌱", id: "boton-tierra" },
 )
+HipodogeEnemigo.ataques.push(
+    { nombre: "🔥", id: "boton-fuego" },
+    { nombre: "🔥", id: "boton-fuego" },
+    { nombre: "🔥", id: "boton-fuego" },
+    { nombre: "💧", id: "boton-agua" },
+    { nombre: "🌱", id: "boton-tierra" },
+)
+
 
 Capipepo.ataques.push(
     { nombre: "💧", id: "boton-agua" },
@@ -73,8 +118,22 @@ Capipepo.ataques.push(
     { nombre: "🔥", id: "boton-fuego" },
     { nombre: "🌱", id: "boton-tierra" },
 )
+CapipepoEnemigo.ataques.push(
+    { nombre: "💧", id: "boton-agua" },
+    { nombre: "💧", id: "boton-agua" },
+    { nombre: "💧", id: "boton-agua" },
+    { nombre: "🔥", id: "boton-fuego" },
+    { nombre: "🌱", id: "boton-tierra" },
+)
 
 Ratigueya.ataques.push(
+    { nombre: "🌱", id: "boton-tierra" },
+    { nombre: "🌱", id: "boton-tierra" },
+    { nombre: "🌱", id: "boton-tierra" },
+    { nombre: "🔥", id: "boton-fuego" },
+    { nombre: "💧", id: "boton-agua" },
+)
+RatigueyaEnemigo.ataques.push(
     { nombre: "🌱", id: "boton-tierra" },
     { nombre: "🌱", id: "boton-tierra" },
     { nombre: "🌱", id: "boton-tierra" },
@@ -113,9 +172,6 @@ function seleccionarMascotaJugador() {
 
     sectionSeleleccionarMascota.style.display = "none"
 
-    // sectionSeleleccionarAtaque.style.display = "flex"
-    sectionVerMapa.style.display = "flex"
-
     if (inputHipodoge.checked) {
         spanMacotaJugador.innerHTML = inputHipodoge.id
         mascotaJugador = inputHipodoge.id
@@ -130,7 +186,8 @@ function seleccionarMascotaJugador() {
     }
 
     extraerAtaques(mascotaJugador)
-    seleccionarMascotaEnemigo()
+    sectionVerMapa.style.display = "flex"
+    iniciarMapa()
 }
 
 function extraerAtaques(mascotaJugador) {
@@ -200,7 +257,9 @@ function ataqueAleatorioEnemigo() {
 }
 
 function iniciarPelea() {
-    if (ataqueJugador.length === 5) { combate() }
+    if (ataqueJugador.length === 5) {
+        combate()
+    }
 }
 
 function indexAmbosOponentes(jugador, enemigo) {
@@ -263,9 +322,9 @@ function crearMensaje(resultado) {
 function crearMensajeFinal(resultadoFinal) {
     sectionMensajes.innerHTML = resultadoFinal
 
-    botonFuego.disabled = true
-    botonAgua.disabled = true
-    botonTierra.disabled = true
+    // botonFuego.disabled = true
+    // botonAgua.disabled = true
+    // botonTierra.disabled = true
 
     sectionReiniciar.style.display = "block"
 }
@@ -276,57 +335,103 @@ function aleatorio(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function pintarPersonaje() {
-    Capipepo.x = Capipepo.x + Capipepo.velocidadX
-    Capipepo.y = Capipepo.y + Capipepo.velocidady
+function pintarCanvas() {
+
+    mascotaJugadorObjeto.x = mascotaJugadorObjeto.x + mascotaJugadorObjeto.velocidadX
+    mascotaJugadorObjeto.y = mascotaJugadorObjeto.y + mascotaJugadorObjeto.velocidady
     lienzo.clearRect(0, 0, mapa.width, mapa.height)
     lienzo.drawImage(
-        Capipepo.mapaFoto,
-        Capipepo.x,
-        Capipepo.y,
-        Capipepo.ancho,
-        Capipepo.alto
+        mapaBackground,
+        0,
+        0,
+        mapa.width,
+        mapa.height
     )
+    mascotaJugadorObjeto.pintarShelbon()
+    HipodogeEnemigo.pintarShelbon()
+    CapipepoEnemigo.pintarShelbon()
+    RatigueyaEnemigo.pintarShelbon()
+    if (mascotaJugadorObjeto.velocidadX !== 0 || mascotaJugadorObjeto.velocidady !== 0) {
+        revisarColicion(HipodogeEnemigo)
+        revisarColicion(CapipepoEnemigo)
+        revisarColicion(RatigueyaEnemigo)
+    }
 }
 
 function moverDerecha() {
-    Capipepo.velocidadX = 5
+    mascotaJugadorObjeto.velocidadX = 5
 }
 function moverIzquierda() {
-    Capipepo.velocidadX = -5
+    mascotaJugadorObjeto.velocidadX = -5
 }
 function moverAbajo() {
-    Capipepo.velocidady = 5
+    mascotaJugadorObjeto.velocidady = 5
 }
 function moverArriba() {
-    Capipepo.velocidady = -5
+    mascotaJugadorObjeto.velocidady = -5
 }
 function detenerMovimiento() {
-    Capipepo.velocidadX = 0
-    Capipepo.velocidady = 0
+    mascotaJugadorObjeto.velocidadX = 0
+    mascotaJugadorObjeto.velocidady = 0
 }
 function sePresionoUnaTecla(event) {
     switch (event.key) {
-        case "Arrowup":
+        case "ArrowUp":
             moverArriba()
-            break;
-        case "Arrowdown":
+            break
+        case "ArrowDown":
             moverAbajo()
-        case "Arrowleft":
+            break
+        case "ArrowLeft":
             moverIzquierda()
             break
-        case "ArrowRigth":
+        case "ArrowRight":
             moverDerecha()
             break
         default:
-            break;
+            break
     }
 }
 
 function iniciarMapa() {
-    intervalo = setInterval(pintarPersonaje, 50)
+    mascotaJugadorObjeto = odtenerObjectoMascota(mascotaJugador)
+    intervalo = setInterval(pintarCanvas, 50)
     window.addEventListener("keydown", sePresionoUnaTecla)
     window.addEventListener("keyup", detenerMovimiento)
+}
+
+function odtenerObjectoMascota() {
+    for (let i = 0; i < shelbones.length; i++) {
+        if (mascotaJugador === shelbones[i].nombre) {
+            return shelbones[i]
+        }
+    }
+}
+
+function revisarColicion(enemigo) {
+    const arribaEnemigo = enemigo.y
+    const abajoEnemigo = enemigo.y + enemigo.alto
+    const derechaEnemigo = enemigo.x + enemigo.ancho
+    const izquierdaEnemigo = enemigo.x
+
+    const arribaMascota = mascotaJugadorObjeto.y
+    const abajoMascota = mascotaJugadorObjeto.y + mascotaJugadorObjeto.alto
+    const derechaMascota = mascotaJugadorObjeto.x + mascotaJugadorObjeto.ancho
+    const izquierdaMascota = mascotaJugadorObjeto.x
+    if (
+        abajoMascota < arribaEnemigo ||
+        arribaMascota > abajoEnemigo ||
+        derechaMascota < izquierdaEnemigo ||
+        izquierdaMascota > derechaEnemigo
+    ) {
+        return
+    }
+
+    detenerMovimiento()
+    clearInterval(intervalo)
+    sectionSeleleccionarAtaque.style.display = "flex"
+    sectionVerMapa.style.display = "none"
+    seleccionarMascotaEnemigo(enemigo)
 }
 
 window.addEventListener("load", iniciarJuego)
