@@ -17,6 +17,7 @@ const contenedorAtaques = document.getElementById("contenedorAtaques")
 const sectionVerMapa = document.getElementById("ver-mapa")
 const mapa = document.getElementById("mapa")
 
+let jugadorId = null
 let shelbones = []
 let ataqueJugador = []
 let ataqueEnemigo = []
@@ -164,10 +165,26 @@ function iniciarJuego() {
 
     })
 
-
     botonMascotaJugador.addEventListener("click", seleccionarMascotaJugador)
     botonReiniciar.addEventListener("click", reiniciarJuego)
+
+    unirseAlJuego()
 }
+
+function unirseAlJuego() {
+    fetch("http://localhost:8080/unirse")
+        .then(function (res) {
+            // console.log(res)
+            if (res.ok) {
+                res.text()
+                    .then(function (respuesta) {
+                        console.log(respuesta)
+                        jugadorId = respuesta
+                    })
+            }
+        })
+}
+
 function seleccionarMascotaJugador() {
 
     sectionSeleleccionarMascota.style.display = "none"
@@ -185,9 +202,23 @@ function seleccionarMascotaJugador() {
         alert("Selecciona una mascota")
     }
 
+    seleccionarShelbon(mascotaJugador)
+
     extraerAtaques(mascotaJugador)
     sectionVerMapa.style.display = "flex"
     iniciarMapa()
+}
+
+function seleccionarShelbon(mascotaJugador) {
+    fetch(`http://localhost:8080/shelbon/${jugadorId}`, {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            shelbon: mascotaJugador
+        })
+    })
 }
 
 function extraerAtaques(mascotaJugador) {
@@ -348,6 +379,9 @@ function pintarCanvas() {
         mapa.height
     )
     mascotaJugadorObjeto.pintarShelbon()
+
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
     HipodogeEnemigo.pintarShelbon()
     CapipepoEnemigo.pintarShelbon()
     RatigueyaEnemigo.pintarShelbon()
@@ -356,6 +390,27 @@ function pintarCanvas() {
         revisarColicion(CapipepoEnemigo)
         revisarColicion(RatigueyaEnemigo)
     }
+}
+
+function enviarPosicion(x, y) {
+    fetch(`http://localhost:8080/shelbon/${jugadorId}/posicion`, {
+        method: "post",
+        headers: {
+            "content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            x,
+            y
+        })
+    })
+        .then(function (res) {
+            if (res.ok) {
+                res.json()
+                    .then(function ({ enemigos }) {
+                        console.log(enemigos)
+                    })
+            }
+        })
 }
 
 function moverDerecha() {
