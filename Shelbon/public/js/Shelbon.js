@@ -3,11 +3,14 @@ const sectionReiniciar = document.getElementById("Reiniciar")
 const botonMascotaJugador = document.getElementById("boton-mascota")
 const botonReiniciar = document.getElementById("boton-Reiniciar")
 sectionReiniciar.style.display = 'none'
+
 const sectionSeleleccionarMascota = document.getElementById("seleccionar-mascota")
-const spanMacotaJugador = (document.getElementById("mascota-Jugador"))
-const spanMascotaEnemigo = (document.getElementById("mascota-enemigo"))
+const spanMacotaJugador = document.getElementById("mascota-Jugador")
+const spanMascotaEnemigo = document.getElementById("mascota-enemigo")
+
 const spanVidasJugador = document.getElementById("vidas-Jugador")
 const spanVidasEnemigo = document.getElementById("vidas-Enemigo")
+
 const sectionMensajes = document.getElementById("resultado")
 const ataqueDelJugador = document.getElementById("ataqueDelJugador")
 const ataqueDelEnemigo = document.getElementById("ataqueDelEnemigo")
@@ -18,7 +21,9 @@ const sectionVerMapa = document.getElementById("ver-mapa")
 const mapa = document.getElementById("mapa")
 
 let jugadorId = null
+let enemigoId = null
 let shelbones = []
+let shelbonesEnemigos = []
 let ataqueJugador = []
 let ataqueEnemigo = []
 let opcinesShelbones
@@ -46,9 +51,14 @@ mapaBackground.src = './imagenes/shelbymap1.png'
 let alturaQueBuscamos
 let anchoDelMapa = window.innerWidth - 20
 const anchoMaximodelMapa = 350
+
 if (anchoDelMapa > anchoMaximodelMapa) {
     anchoDelMapa = anchoMaximodelMapa - 20
 }
+
+let HipodogeEnemigo
+let CapipepoEnemigo
+let RatigueyaEnemigo
 
 alturaQueBuscamos = anchoDelMapa * 600 / 800
 
@@ -56,7 +66,8 @@ mapa.width = anchoDelMapa
 mapa.height = alturaQueBuscamos
 
 class Shelbon {
-    constructor(nombre, foto, vida, fotoMapa) {
+    constructor(nombre, foto, vida, fotoMapa, id = null) {
+        this.id = id
         this.nombre = nombre
         this.foto = foto
         this.vida = vida
@@ -82,70 +93,47 @@ class Shelbon {
 }
 
 
-let Hipodoge = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png'
-)
-let Capipepo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png'
-)
-let Ratigueya = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png'
-)
-let HipodogeEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png'
-)
-let CapipepoEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png'
-)
-let RatigueyaEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png'
-)
+let Hipodoge = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png')
+
+let Capipepo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png')
+
+let Ratigueya = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png')
 
 
-Hipodoge.ataques.push(
+const HIPODOGE_ATAQUES = [
     { nombre: "🔥", id: "boton-fuego" },
     { nombre: "🔥", id: "boton-fuego" },
     { nombre: "🔥", id: "boton-fuego" },
     { nombre: "💧", id: "boton-agua" },
     { nombre: "🌱", id: "boton-tierra" },
-)
-HipodogeEnemigo.ataques.push(
-    { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "💧", id: "boton-agua" },
-    { nombre: "🌱", id: "boton-tierra" },
-)
+]
 
+Hipodoge.ataques.push(...HIPODOGE_ATAQUES)
 
-Capipepo.ataques.push(
+const CAPIPEPO_ATAQUES = [
     { nombre: "💧", id: "boton-agua" },
     { nombre: "💧", id: "boton-agua" },
     { nombre: "💧", id: "boton-agua" },
     { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "🌱", id: "boton-tierra" },
-)
-CapipepoEnemigo.ataques.push(
-    { nombre: "💧", id: "boton-agua" },
-    { nombre: "💧", id: "boton-agua" },
-    { nombre: "💧", id: "boton-agua" },
-    { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "🌱", id: "boton-tierra" },
-)
+    { nombre: "🌱", id: "boton-tierra" },]
 
-Ratigueya.ataques.push(
+Capipepo.ataques.push(...CAPIPEPO_ATAQUES)
+
+const RATIGUEYA_ATAQUES = [
     { nombre: "🌱", id: "boton-tierra" },
     { nombre: "🌱", id: "boton-tierra" },
     { nombre: "🌱", id: "boton-tierra" },
     { nombre: "🔥", id: "boton-fuego" },
     { nombre: "💧", id: "boton-agua" },
-)
-RatigueyaEnemigo.ataques.push(
-    { nombre: "🌱", id: "boton-tierra" },
-    { nombre: "🌱", id: "boton-tierra" },
-    { nombre: "🌱", id: "boton-tierra" },
-    { nombre: "🔥", id: "boton-fuego" },
-    { nombre: "💧", id: "boton-agua" },
-)
+]
+
+Ratigueya.ataques.push(...RATIGUEYA_ATAQUES)
 
 shelbones.push(Hipodoge, Capipepo, Ratigueya)
 
 
 function iniciarJuego() {
+
     sectionSeleleccionarAtaque.style.display = "none"
     sectionVerMapa.style.display = "none"
 
@@ -172,9 +160,8 @@ function iniciarJuego() {
 }
 
 function unirseAlJuego() {
-    fetch("http://localhost:8080/unirse")
+    fetch("http://192.168.2.14:8080/unirse")
         .then(function (res) {
-            // console.log(res)
             if (res.ok) {
                 res.text()
                     .then(function (respuesta) {
@@ -187,8 +174,6 @@ function unirseAlJuego() {
 
 function seleccionarMascotaJugador() {
 
-    sectionSeleleccionarMascota.style.display = "none"
-
     if (inputHipodoge.checked) {
         spanMacotaJugador.innerHTML = inputHipodoge.id
         mascotaJugador = inputHipodoge.id
@@ -200,7 +185,10 @@ function seleccionarMascotaJugador() {
         mascotaJugador = inputRatigueya.id
     } else {
         alert("Selecciona una mascota")
+        return
     }
+
+    sectionSeleleccionarMascota.style.display = "none"
 
     seleccionarShelbon(mascotaJugador)
 
@@ -210,7 +198,7 @@ function seleccionarMascotaJugador() {
 }
 
 function seleccionarShelbon(mascotaJugador) {
-    fetch(`http://localhost:8080/shelbon/${jugadorId}`, {
+    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}`, {
         method: "post",
         headers: {
             "Content-Type": "application/json"
@@ -252,28 +240,63 @@ function secuenciaAtaque() {
                 ataqueJugador.push("FUEGO")
                 console.log(ataqueJugador)
                 boton.style.background = "#112f58"
+                boton.disabled = true
             } else if (e.target.textContent === "💧") {
                 ataqueJugador.push("AGUA")
                 console.log(ataqueJugador)
                 boton.style.background = "#112f58"
+                boton.disabled = true
             } else {
                 ataqueJugador.push("TIERRA")
                 console.log(ataqueJugador)
                 boton.style.background = "#112f58"
+                boton.disabled = true
             }
-            ataqueAleatorioEnemigo()
+            if (ataqueJugador.length === 5) {
+                enviarAtaques()
+            }
         })
     })
 }
+function enviarAtaques() {
+    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/ataques`, {
+        method: "post",
+        headers: {
+            "Content- Type": "application/json"
+        },
+        body: JSON.stringify({
+            ataques: ataqueJugador
+        })
+    })
 
-function seleccionarMascotaEnemigo() {
-    let mascotaAleatoria = aleatorio(0, shelbones.length - 1)
-    spanMascotaEnemigo.innerHTML = shelbones[mascotaAleatoria].nombre
-    ataquesShelbonEnemigo = shelbones[mascotaAleatoria].ataques
+    intervalo = setInterval(obtenerAtaques, 50)
+
+}
+
+function obtenerAtaques() {
+    fetch(`http://192.168.2.14:8080/mokepon/${enemigoId}/ataques`)
+        .then(function (res) {
+            if (res.ok) {
+                res.json()
+                    .then(function ({ ataques }) {
+                        if (ataques.length === 5) {
+                            ataqueEnemigo = ataques
+                            combate()
+                        }
+                    })
+            }
+        })
+}
+
+
+function seleccionarMascotaEnemigo(enemigo) {
+    spanMascotaEnemigo.innerHTML = enemigo.nombre
+    ataquesShelbonEnemigo = enemigo.ataques
     secuenciaAtaque()
 }
 
 function ataqueAleatorioEnemigo() {
+    console.log('Ataques enemigo', ataquesShelbonEnemigo);
     let ataqueAleatorio = aleatorio(0, ataquesShelbonEnemigo.length - 1)
 
     if (ataqueAleatorio == 0 || ataqueAleatorio == 1) {
@@ -299,11 +322,12 @@ function indexAmbosOponentes(jugador, enemigo) {
 }
 
 function combate() {
+    clearInterval(intervalo)
+
     for (let index = 0; index < ataqueJugador.length; index++) {
         if (ataqueJugador[index] === ataqueEnemigo[index]) {
             indexAmbosOponentes(index, index)
             crearMensaje("EMPATE")
-
         } else if (ataqueJugador[index] === "FUEGO" && ataqueEnemigo[index] === "TIERRA") {
             indexAmbosOponentes(index, index)
             crearMensaje("GANASTE")
@@ -382,18 +406,14 @@ function pintarCanvas() {
 
     enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
 
-    HipodogeEnemigo.pintarShelbon()
-    CapipepoEnemigo.pintarShelbon()
-    RatigueyaEnemigo.pintarShelbon()
-    if (mascotaJugadorObjeto.velocidadX !== 0 || mascotaJugadorObjeto.velocidady !== 0) {
-        revisarColicion(HipodogeEnemigo)
-        revisarColicion(CapipepoEnemigo)
-        revisarColicion(RatigueyaEnemigo)
-    }
+    shelbonesEnemigos.forEach(function (shelbon) {
+        shelbon.pintarShelbon()
+        revisarColicion(shelbon)
+    })
 }
 
 function enviarPosicion(x, y) {
-    fetch(`http://localhost:8080/shelbon/${jugadorId}/posicion`, {
+    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/posicion`, {
         method: "post",
         headers: {
             "content-Type": "application/json"
@@ -408,6 +428,23 @@ function enviarPosicion(x, y) {
                 res.json()
                     .then(function ({ enemigos }) {
                         console.log(enemigos)
+                        shelbonesEnemigos = enemigos.map(function (enemigo) {
+                            let shelbonEnemigo = null
+                            const shelbonNombre = enemigo.shelbon?.nombre || ""
+                            if (shelbonNombre === "Hipodoge") {
+                                shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
+                            } else if (shelbonNombre === "Capipepo") {
+                                shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
+                            } else if (shelbonNombre === "Ratigueya") {
+                                shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
+                            }
+
+                            shelbonEnemigo.x = enemigo.x || 0
+                            shelbonEnemigo.y = enemigo.y || 0
+
+
+                            return shelbonEnemigo
+                        })
                     })
             }
         })
@@ -450,6 +487,7 @@ function sePresionoUnaTecla(event) {
 
 function iniciarMapa() {
     mascotaJugadorObjeto = odtenerObjectoMascota(mascotaJugador)
+    console.log(mascotaJugadorObjeto, mascotaJugador);
     intervalo = setInterval(pintarCanvas, 50)
     window.addEventListener("keydown", sePresionoUnaTecla)
     window.addEventListener("keyup", detenerMovimiento)
@@ -484,8 +522,11 @@ function revisarColicion(enemigo) {
 
     detenerMovimiento()
     clearInterval(intervalo)
-    sectionSeleleccionarAtaque.style.display = "flex"
-    sectionVerMapa.style.display = "none"
+    console.log('Se detecto una colision');
+
+    enemigoId = enemigo.id
+    sectionSeleleccionarAtaque.style.display = 'flex'
+    sectionVerMapa.style.display = 'none'
     seleccionarMascotaEnemigo(enemigo)
 }
 
