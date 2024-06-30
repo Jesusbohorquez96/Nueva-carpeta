@@ -262,7 +262,7 @@ function enviarAtaques() {
     fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/ataques`, {
         method: "post",
         headers: {
-            "Content- Type": "application/json"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             ataques: ataqueJugador
@@ -274,7 +274,7 @@ function enviarAtaques() {
 }
 
 function obtenerAtaques() {
-    fetch(`http://192.168.2.14:8080/mokepon/${enemigoId}/ataques`)
+    fetch(`http://192.168.2.14:8080/shelbon/${enemigoId}/ataques`)
         .then(function (res) {
             if (res.ok) {
                 res.json()

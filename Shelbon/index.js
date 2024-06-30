@@ -100,5 +100,5 @@ app.get("/shelbon/:jugadorId/ataques", (req, res) => {
 })
 
 app.listen(8080, () => {
-    console.log("Run Server")
+    console.log("Servidor funcionando")
 })
