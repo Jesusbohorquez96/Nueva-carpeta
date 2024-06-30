@@ -1,0 +1,5 @@
+crear un servidor websocket para recibir y enviar mensajes 
+conectarse desde el frontend al servidor websocket
+manejar la funcion de unirse en el websocket 
+frontend enviar funcion de unirse
+backend validar funcion de unirse
