@@ -66,7 +66,7 @@ mapa.width = anchoDelMapa
 mapa.height = alturaQueBuscamos
 
 class Shelbon {
-    constructor(nombre, foto, vida, fotoMapa, id = null) {
+    constructor(nombre, foto, vida, fotoMapa, id = 0) {
         this.id = id
         this.nombre = nombre
         this.foto = foto
@@ -161,10 +161,10 @@ function iniciarJuego() {
 
 function unirseAlJuego() {
     fetch("http://192.168.2.14:8080/unirse")
-        .then(function (res) {
+        .then((res) => {
             if (res.ok) {
                 res.text()
-                    .then(function (respuesta) {
+                    .then((respuesta) => {
                         console.log(respuesta)
                         jugadorId = respuesta
                     })
@@ -259,6 +259,8 @@ function secuenciaAtaque() {
     })
 }
 function enviarAtaques() {
+    console.log('Enviar ataques', ataqueJugador);
+
     fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/ataques`, {
         method: "post",
         headers: {
@@ -268,12 +270,12 @@ function enviarAtaques() {
             ataques: ataqueJugador
         })
     })
-
     intervalo = setInterval(obtenerAtaques, 50)
-
 }
 
 function obtenerAtaques() {
+    console.log('OBTENER ATAQUES');
+
     fetch(`http://192.168.2.14:8080/shelbon/${enemigoId}/ataques`)
         .then(function (res) {
             if (res.ok) {
@@ -295,26 +297,26 @@ function seleccionarMascotaEnemigo(enemigo) {
     secuenciaAtaque()
 }
 
-function ataqueAleatorioEnemigo() {
-    console.log('Ataques enemigo', ataquesShelbonEnemigo);
-    let ataqueAleatorio = aleatorio(0, ataquesShelbonEnemigo.length - 1)
+// function ataqueAleatorioEnemigo() {
+//     console.log('Ataques enemigo', ataquesShelbonEnemigo);
+//     let ataqueAleatorio = aleatorio(0, ataquesShelbonEnemigo.length - 1)
 
-    if (ataqueAleatorio == 0 || ataqueAleatorio == 1) {
-        ataqueEnemigo.push("FUEGO")
-    } else if (ataqueAleatorio == 3 || ataqueAleatorio == 4) {
-        ataqueEnemigo.push("AGUA")
-    } else {
-        ataqueEnemigo.push("TIERRA")
-    }
-    console.log(ataqueEnemigo)
-    iniciarPelea()
-}
+//     if (ataqueAleatorio == 0 || ataqueAleatorio == 1) {
+//         ataqueEnemigo.push("FUEGO")
+//     } else if (ataqueAleatorio == 3 || ataqueAleatorio == 4) {
+//         ataqueEnemigo.push("AGUA")
+//     } else {
+//         ataqueEnemigo.push("TIERRA")
+//     }
+//     console.log(ataqueEnemigo)
+//     iniciarPelea()
+// }
 
-function iniciarPelea() {
-    if (ataqueJugador.length === 5) {
-        combate()
-    }
-}
+// function iniciarPelea() {
+//     if (ataqueJugador.length === 5) {
+//         combate()
+//     }
+// }
 
 function indexAmbosOponentes(jugador, enemigo) {
     indexAtaqueJugador = ataqueJugador[jugador]
@@ -323,6 +325,7 @@ function indexAmbosOponentes(jugador, enemigo) {
 
 function combate() {
     clearInterval(intervalo)
+    console.log('COMBATE');
 
     for (let index = 0; index < ataqueJugador.length; index++) {
         if (ataqueJugador[index] === ataqueEnemigo[index]) {
@@ -427,10 +430,12 @@ function enviarPosicion(x, y) {
             if (res.ok) {
                 res.json()
                     .then(function ({ enemigos }) {
-                        console.log(enemigos)
                         shelbonesEnemigos = enemigos.map(function (enemigo) {
+                            console.log(enemigos)
+
                             let shelbonEnemigo = null
                             const shelbonNombre = enemigo.shelbon?.nombre || ""
+
                             if (shelbonNombre === "Hipodoge") {
                                 shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
                             } else if (shelbonNombre === "Capipepo") {
