@@ -3,3 +3,8 @@ conectarse desde el frontend al servidor websocket
 manejar la funcion de unirse en el websocket 
 frontend enviar funcion de unirse
 backend validar funcion de unirse
+
+
+
+enviar un mensage del frontend al backend por websocket
+en el backend deve recibir ese mensaje y hacer lo que ten la api de shelbon/jugador id

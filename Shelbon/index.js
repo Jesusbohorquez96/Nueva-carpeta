@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require("express")
 const cors = require("cors")
 const app = express()
@@ -6,7 +7,7 @@ app.use(express.static('public'))
 app.use(cors())
 app.use(express.json())
 
-const jugadores = []
+let jugadores = []
 
 class Jugador {
     constructor(id) {
@@ -44,7 +45,7 @@ app.get("/unirse", (req, res) => {
 
     res.send(id)
 })
-
+//este es el api que debo combertir para utilizarlo con websocket
 app.post("/shelbon/:jugadorId", (req, res) => {
     const jugadorId = req.params.jugadorId || ""
     const nombre = req.body.shelbon || ""
@@ -99,6 +100,26 @@ app.get("/shelbon/:jugadorId/ataques", (req, res) => {
     })
 })
 
-app.listen(8080, () => {
-    console.log("Servidor funcionando")
+app.set('port', process.env.PORT || 8080)
+
+app.use(express.static(path.join(__dirname, 'public')))
+
+const server = app.listen(app.get('port'), () => {
+    console.log('servidor funcioando', app.get('port'))
+})
+
+const socketIO = require('socket.io')
+const io = socketIO(server)
+
+io.on('connection', (socket) => {
+    const jugador = new Jugador(socket.id)
+
+    jugadores.push(jugador)
+    
+    socket.emit('jugadorConectado', { id: socket.id });
+    console.log('new connection', socket.id)
+    socket.on('disconnect', function () {
+        console.log('Got disconnect!', socket.id)
+        jugadores = jugadores.filter(jugador => jugador.id !== socket.id);
+    })
 })
