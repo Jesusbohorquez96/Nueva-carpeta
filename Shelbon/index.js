@@ -47,6 +47,7 @@ app.get("/unirse", (req, res) => {
 })
 //este es el api que debo combertir para utilizarlo con websocket
 app.post("/shelbon/:jugadorId", (req, res) => {
+
     const jugadorId = req.params.jugadorId || ""
     const nombre = req.body.shelbon || ""
     const shelbon = new Shelbon(nombre)
@@ -99,8 +100,7 @@ app.get("/shelbon/:jugadorId/ataques", (req, res) => {
         ataques: jugador.ataques || []
     })
 })
-
-app.set('port', process.env.PORT || 8080)
+const socket = app.set('port', process.env.PORT || 8080)
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -115,8 +115,20 @@ io.on('connection', (socket) => {
     const jugador = new Jugador(socket.id)
 
     jugadores.push(jugador)
-    
+
     socket.emit('jugadorConectado', { id: socket.id });
+    socket.on('mensaje', (mensaje) => {
+        console.log('Mensaje recibido del cliente:', mensaje)
+    })
+
+    socket.on('seleccionarMascota', (mensaje) => {
+        const shelbon = new Shelbon(mensaje.mascotaJugador)
+        const jugadorIndex = jugadores.findIndex((jugador) => socket.id === jugador.id)
+        if (jugadorIndex >= 0) {
+            jugadores[jugadorIndex].asignarShelbon(shelbon)
+        }
+        console.log('seleccion de mascota:', (mensaje.mascotaJugador))
+    })
     console.log('new connection', socket.id)
     socket.on('disconnect', function () {
         console.log('Got disconnect!', socket.id)

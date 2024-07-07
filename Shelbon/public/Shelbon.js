@@ -1,4 +1,27 @@
-const socket = io()
+// Inicializa la conexión con el servidor
+const socket = io();
+
+// Manejar el evento de conexión
+socket.on('connect', () => {
+    console.log('Conectado al servidor WebSocket mediante socket.io');
+
+    // Enviar un mensaje al servidor una vez que la conexión está abierta
+    enviarMensajeAlServidor('Mensaje inicial');
+});
+
+// Manejar el evento de desconexión
+socket.on('disconnect', () => {
+    console.log('Desconectado del servidor WebSocket');
+});
+
+// Función para enviar mensajes al servidor
+function enviarMensajeAlServidor(mensaje) {
+    if (socket.connected) {
+        socket.emit('mensaje', mensaje);
+    } else {
+        console.error('La conexión WebSocket no está abierta. No se puede enviar el mensaje:', mensaje);
+    }
+}
 
 const sectionSeleleccionarAtaque = document.getElementById("seleccionar-ataque")
 const sectionReiniciar = document.getElementById("Reiniciar")
@@ -205,15 +228,16 @@ function seleccionarMascotaJugador() {
 }
 // funcion que voy a remplazar para hacerlo por websocket
 function seleccionarShelbon(mascotaJugador) {
-    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}`, {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            shelbon: mascotaJugador
-        })
-    })
+    socket.emit('seleccionarMascota', {mascotaJugador})
+    // fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}`, {
+    //     method: "post",
+    //     headers: {
+    //         "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify({
+    //         shelbon: mascotaJugador
+    //     })
+    // })
 }
 
 function extraerAtaques(mascotaJugador) {
