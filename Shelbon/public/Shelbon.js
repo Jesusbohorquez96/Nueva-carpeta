@@ -462,7 +462,7 @@ function enviarPosicion(x, y) {
     socket.emit('enviar pocicion de los jugadores', { x, y })
     socket.on('jugadoresEnemigos', (mensaje) => {
         console.log(mensaje)
-        shelbonesEnemigos = mensaje.enemigos.map(function (enemigo) {
+        shelbonesEnemigos = mensaje.jugadores.filter((jugador) => jugador.id !== jugadorId).map(function (enemigo) {
             console.log(mensaje)
 
             let shelbonEnemigo = null

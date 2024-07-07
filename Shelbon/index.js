@@ -136,7 +136,8 @@ io.on('connection', (socket) => {
         const enemigos = jugadores.filter((jugador) => socket.id !== jugador.id)
 
         console.log('enviar pocicion de los jugadores', mensaje.x, mensaje.y)
-        socket.emit('jugadoresEnemigos', { enemigos });
+        socket.emit('jugadoresEnemigos', { jugadores })
+        io.sockets.emit('jugadoresEnemigos', mensaje.x, mensaje.y)
     })
 
     // Configurar el evento del socket
