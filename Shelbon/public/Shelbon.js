@@ -228,7 +228,7 @@ function seleccionarMascotaJugador() {
 }
 // funcion que voy a remplazar para hacerlo por websocket
 function seleccionarShelbon(mascotaJugador) {
-    socket.emit('seleccionarMascota', {mascotaJugador})
+    socket.emit('seleccionarMascota', { mascotaJugador })
     // fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}`, {
     //     method: "post",
     //     headers: {
@@ -290,35 +290,47 @@ function secuenciaAtaque() {
     })
 }
 function enviarAtaques() {
+    socket.emit('enviar ataques jugador', { ataques: ataqueJugador, enemigoId });
+
     console.log('Enviar ataques', ataqueJugador);
 
-    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/ataques`, {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            ataques: ataqueJugador
-        })
-    })
-    intervalo = setInterval(obtenerAtaques, 50)
+    // fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/ataques`, {
+    //     method: "post",
+    //     headers: {
+    //         "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify({
+    //         ataques: ataqueJugador
+    //     })
+    // })
+    // intervalo = setInterval(obtenerAtaques, 250)
+    obtenerAtaques()
 }
+socket.on('obtener ataques enemigos', (mensaje) => {
+    console.log(mensaje.ataques)
+    if (mensaje.ataques.length === 5) {
+        ataqueEnemigo = mensaje.ataques
+        combate()
+    }
+
+})
 
 function obtenerAtaques() {
-    console.log('OBTENER ATAQUES');
+    socket.emit('obtener ataques jugador', { enemigoId });
+    // console.log('OBTENER ATAQUES');
 
-    fetch(`http://192.168.2.14:8080/shelbon/${enemigoId}/ataques`)
-        .then(function (res) {
-            if (res.ok) {
-                res.json()
-                    .then(function ({ ataques }) {
-                        if (ataques.length === 5) {
-                            ataqueEnemigo = ataques
-                            combate()
-                        }
-                    })
-            }
-        })
+    // fetch(`http://192.168.2.14:8080/shelbon/${enemigoId}/ataques`)
+    //     .then(function (res) {
+    //         if (res.ok) {
+    //             res.json()
+    //                 .then(function ({ ataques }) {
+    //                     if (ataques.length === 5) {
+    //                         ataqueEnemigo = ataques
+    //                         combate()
+    //                     }
+    //                 })
+    //         }
+    //     })
 }
 
 
@@ -356,7 +368,7 @@ function indexAmbosOponentes(jugador, enemigo) {
 
 function combate() {
     clearInterval(intervalo)
-    console.log('COMBATE');
+    console.log('COMBATE')
 
     for (let index = 0; index < ataqueJugador.length; index++) {
         if (ataqueJugador[index] === ataqueEnemigo[index]) {
@@ -447,43 +459,70 @@ function pintarCanvas() {
 }
 
 function enviarPosicion(x, y) {
-    fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/posicion`, {
-        method: "post",
-        headers: {
-            "content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            x,
-            y
-        })
-    })
-        .then(function (res) {
-            if (res.ok) {
-                res.json()
-                    .then(function ({ enemigos }) {
-                        shelbonesEnemigos = enemigos.map(function (enemigo) {
-                            console.log(enemigos)
+    socket.emit('enviar pocicion de los jugadores', { x, y })
+    socket.on('jugadoresEnemigos', (mensaje) => {
+        console.log(mensaje)
+        shelbonesEnemigos = mensaje.enemigos.map(function (enemigo) {
+            console.log(mensaje)
 
-                            let shelbonEnemigo = null
-                            const shelbonNombre = enemigo.shelbon?.nombre || ""
+            let shelbonEnemigo = null
+            const shelbonNombre = enemigo.shelbon?.nombre || ""
 
-                            if (shelbonNombre === "Hipodoge") {
-                                shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
-                            } else if (shelbonNombre === "Capipepo") {
-                                shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
-                            } else if (shelbonNombre === "Ratigueya") {
-                                shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
-                            }
-
-                            shelbonEnemigo.x = enemigo.x || 0
-                            shelbonEnemigo.y = enemigo.y || 0
-
-
-                            return shelbonEnemigo
-                        })
-                    })
+            if (shelbonNombre === "Hipodoge") {
+                shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
+            } else if (shelbonNombre === "Capipepo") {
+                shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
+            } else if (shelbonNombre === "Ratigueya") {
+                shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
             }
+
+            shelbonEnemigo.x = enemigo.x || 0
+            shelbonEnemigo.y = enemigo.y || 0
+
+
+            return shelbonEnemigo
         })
+
+        console.log('jugadores enemigos:', mensaje)
+    })
+
+    // fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/posicion`, {
+    //     method: "post",
+    //     headers: {
+    //         "content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify({
+    //         x,
+    //         y
+    //     })
+    // })
+    //     .then(function (res) {
+    //         if (res.ok) {
+    //             res.json()
+    //                 .then(function ({ enemigos }) {
+    //                     shelbonesEnemigos = enemigos.map(function (enemigo) {
+    //                         console.log(enemigos)
+
+    //                         let shelbonEnemigo = null
+    //                         const shelbonNombre = enemigo.shelbon?.nombre || ""
+
+    //                         if (shelbonNombre === "Hipodoge") {
+    //                             shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
+    //                         } else if (shelbonNombre === "Capipepo") {
+    //                             shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
+    //                         } else if (shelbonNombre === "Ratigueya") {
+    //                             shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
+    //                         }
+
+    //                         shelbonEnemigo.x = enemigo.x || 0
+    //                         shelbonEnemigo.y = enemigo.y || 0
+
+
+    //                         return shelbonEnemigo
+    //                     })
+    //                 })
+    //         }
+    //     })
 }
 
 function moverDerecha() {
