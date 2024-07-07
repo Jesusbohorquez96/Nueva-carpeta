@@ -184,6 +184,7 @@ function iniciarJuego() {
     })
 
     botonMascotaJugador.addEventListener("click", seleccionarMascotaJugador)
+    
     botonReiniciar.addEventListener("click", reiniciarJuego)
 
     // unirseAlJuego()
@@ -308,7 +309,7 @@ function enviarAtaques() {
 }
 socket.on('obtener ataques enemigos', (mensaje) => {
     console.log(mensaje.ataques)
-    if (mensaje.ataques.length === 5) {
+    if (mensaje.ataques.length === 5 && ataqueJugador.length === 5) {
         ataqueEnemigo = mensaje.ataques
         combate()
     }
@@ -450,41 +451,44 @@ function pintarCanvas() {
     )
     mascotaJugadorObjeto.pintarShelbon()
 
-    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
 
     shelbonesEnemigos.forEach(function (shelbon) {
         shelbon.pintarShelbon()
         revisarColicion(shelbon)
     })
+    
 }
+
+socket.on('jugadoresEnemigos', (mensaje) => {
+    console.log(mensaje)
+    shelbonesEnemigos = mensaje.jugadores.filter((jugador) => jugador.id !== jugadorId).map(function (enemigo) {
+        console.log(mensaje)
+
+        let shelbonEnemigo = null
+        const shelbonNombre = enemigo.shelbon?.nombre || ""
+
+        if (shelbonNombre === "Hipodoge") {
+            shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
+        } else if (shelbonNombre === "Capipepo") {
+            shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
+        } else if (shelbonNombre === "Ratigueya") {
+            shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
+        }
+
+        shelbonEnemigo.x = enemigo.x || 0
+        shelbonEnemigo.y = enemigo.y || 0
+
+
+        return shelbonEnemigo
+    })
+
+    console.log('jugadores enemigos:', mensaje)
+    pintarCanvas()
+})
 
 function enviarPosicion(x, y) {
     socket.emit('enviar pocicion de los jugadores', { x, y })
-    socket.on('jugadoresEnemigos', (mensaje) => {
-        console.log(mensaje)
-        shelbonesEnemigos = mensaje.jugadores.filter((jugador) => jugador.id !== jugadorId).map(function (enemigo) {
-            console.log(mensaje)
 
-            let shelbonEnemigo = null
-            const shelbonNombre = enemigo.shelbon?.nombre || ""
-
-            if (shelbonNombre === "Hipodoge") {
-                shelbonEnemigo = new Shelbon("Hipodoge", './imagenes/Hipodoge.png', 5, './imagenes/hipodogeC.png', enemigo.id)
-            } else if (shelbonNombre === "Capipepo") {
-                shelbonEnemigo = new Shelbon("Capipepo", './imagenes/Capipepo.png', 5, './imagenes/capipepoC.png', enemigo.id)
-            } else if (shelbonNombre === "Ratigueya") {
-                shelbonEnemigo = new Shelbon("Ratigueya", './imagenes/Ratiguella.png', 5, './imagenes/ratigueyaC.png', enemigo.id)
-            }
-
-            shelbonEnemigo.x = enemigo.x || 0
-            shelbonEnemigo.y = enemigo.y || 0
-
-
-            return shelbonEnemigo
-        })
-
-        console.log('jugadores enemigos:', mensaje)
-    })
 
     // fetch(`http://192.168.2.14:8080/shelbon/${jugadorId}/posicion`, {
     //     method: "post",
@@ -527,15 +531,23 @@ function enviarPosicion(x, y) {
 
 function moverDerecha() {
     mascotaJugadorObjeto.velocidadX = 5
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
 }
 function moverIzquierda() {
     mascotaJugadorObjeto.velocidadX = -5
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
 }
 function moverAbajo() {
     mascotaJugadorObjeto.velocidady = 5
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
 }
 function moverArriba() {
     mascotaJugadorObjeto.velocidady = -5
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
 }
 function detenerMovimiento() {
     mascotaJugadorObjeto.velocidadX = 0
@@ -563,7 +575,9 @@ function sePresionoUnaTecla(event) {
 function iniciarMapa() {
     mascotaJugadorObjeto = odtenerObjectoMascota(mascotaJugador)
     console.log(mascotaJugadorObjeto, mascotaJugador);
-    intervalo = setInterval(pintarCanvas, 50)
+    pintarCanvas()
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+    // intervalo = setInterval(pintarCanvas, 50)
     window.addEventListener("keydown", sePresionoUnaTecla)
     window.addEventListener("keyup", detenerMovimiento)
 }
