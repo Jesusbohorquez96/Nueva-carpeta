@@ -38,12 +38,12 @@
         <div>
             <button onmouseup="detenerMovimiento()" ontouchend="detenerMovimiento()" onmousedown="moverIzquierda()"
                 ontouchstart="moverIzquierda()">Izquierda</button>
-            <button onmouseup="detenerMovimiento()" ontouchend="detenerMovimiento()" onmousedown="moverAbajo()"
-                ontouchstart="moverAbajo()">Abajo</button>
-        </div>
-        <div>
             <button onmouseup="detenerMovimiento()" ontouchend="detenerMovimiento()" onmousedown="moverDerecha()"
                 ontouchstart="moverDerecha()">Derecha</button>
+        </div>
+        <div>
+            <button onmouseup="detenerMovimiento()" ontouchend="detenerMovimiento()" onmousedown="moverAbajo()"
+                ontouchstart="moverAbajo()">Abajo</button>
         </div>
     </section>
 
@@ -76,7 +76,15 @@
             </div>
         </div>
     </section>
-    <script src="./js/Shelbon.js"></script>
+
+    <!-- <div class="chat-Hurbano">
+        <div class="">
+
+        </div>
+    </div> -->
+
+    <script src="/socket.io/socket.io.js" charset="utf-8"></script>
+    <script src="./Shelbon.js"></script>
 </body>
 
 </html>
